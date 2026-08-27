@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.venv/bin/python -c \"import django; print\\('Django', django.get_version\\(\\)\\)\")",
+      "Bash(.venv/bin/python manage.py makemigrations)",
+      "Bash(.venv/bin/python manage.py migrate --noinput)",
+      "Bash(.venv/bin/python manage.py seed_data)",
+      "Bash(.venv/bin/python manage.py check)",
+      "Bash(pkill -f \"manage.py runserver\")",
+      "Bash(docker --version)",
+      "Bash(docker compose *)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" http://localhost:8000/)"
+    ]
+  }
+}

@@ -1,0 +1,52 @@
+{% extends "core/base.html" %}
+{% block title %}Home · TravelRec{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Tourist Attraction Recommendation</h1>
+    <p>Manage users, attractions, and their ratings — all in one place.</p>
+</section>
+
+<div class="cards">
+    <a class="card" href="{% url 'visitor_list' %}">
+        <span class="card-icon">👤</span>
+        <h2>Users</h2>
+        <p>{{ visitors|length }} record(s)</p>
+    </a>
+    <a class="card" href="{% url 'spot_list' %}">
+        <span class="card-icon">📍</span>
+        <h2>Attractions</h2>
+        <p>{{ spots|length }} record(s)</p>
+    </a>
+    <a class="card" href="{% url 'rating_list' %}">
+        <span class="card-icon">⭐</span>
+        <h2>Ratings</h2>
+        <p>{{ ratings|length }} record(s)</p>
+    </a>
+</div>
+
+<section class="panel">
+    <div class="panel-head">
+        <h2>Latest Ratings</h2>
+        <a class="btn" href="{% url 'rating_create' %}">+ Add Rating</a>
+    </div>
+    <table class="table">
+        <thead>
+            <tr><th>ID</th><th>User</th><th>Attraction</th><th>Score</th><th>Comment</th></tr>
+        </thead>
+        <tbody>
+            {% for r in ratings %}
+            <tr>
+                <td>{{ r.id }}</td>
+                <td>{{ r.visitor.name }}</td>
+                <td>{{ r.spot.name }}</td>
+                <td>{{ r.score }} / 5</td>
+                <td>{{ r.comment }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="empty">No ratings yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

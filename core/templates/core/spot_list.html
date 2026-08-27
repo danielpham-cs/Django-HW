@@ -1,0 +1,32 @@
+{% extends "core/base.html" %}
+{% block title %}Attractions · TravelRec{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div class="panel-head">
+        <h1>Tourist Attractions</h1>
+        <a class="btn" href="{% url 'spot_create' %}">+ Add Attraction</a>
+    </div>
+    <table class="table">
+        <thead>
+            <tr><th>ID</th><th>Name</th><th>Location</th><th>Area / Category</th><th class="actions">Actions</th></tr>
+        </thead>
+        <tbody>
+            {% for s in spots %}
+            <tr>
+                <td>{{ s.id }}</td>
+                <td>{{ s.name }}</td>
+                <td>{{ s.location }}</td>
+                <td><span class="tag">{{ s.category }}</span></td>
+                <td class="actions">
+                    <a class="btn small" href="{% url 'spot_update' s.id %}">Edit</a>
+                    <a class="btn small danger" href="{% url 'spot_delete' s.id %}">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="empty">No attractions yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

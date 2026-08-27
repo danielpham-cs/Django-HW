@@ -1,0 +1,33 @@
+{% extends "core/base.html" %}
+{% block title %}Ratings · TravelRec{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div class="panel-head">
+        <h1>Ratings</h1>
+        <a class="btn" href="{% url 'rating_create' %}">+ Add Rating</a>
+    </div>
+    <table class="table">
+        <thead>
+            <tr><th>ID</th><th>User</th><th>Attraction</th><th>Score</th><th>Comment</th><th class="actions">Actions</th></tr>
+        </thead>
+        <tbody>
+            {% for r in ratings %}
+            <tr>
+                <td>{{ r.id }}</td>
+                <td>{{ r.visitor.name }}</td>
+                <td>{{ r.spot.name }}</td>
+                <td>{{ r.score }} / 5</td>
+                <td>{{ r.comment }}</td>
+                <td class="actions">
+                    <a class="btn small" href="{% url 'rating_update' r.id %}">Edit</a>
+                    <a class="btn small danger" href="{% url 'rating_delete' r.id %}">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" class="empty">No ratings yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

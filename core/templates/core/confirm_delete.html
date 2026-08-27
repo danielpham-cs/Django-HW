@@ -1,0 +1,16 @@
+{% extends "core/base.html" %}
+{% block title %}Delete {{ title }} · TravelRec{% endblock %}
+
+{% block content %}
+<section class="panel narrow">
+    <h1>Delete {{ title }}</h1>
+    <p>Are you sure you want to delete <strong>{{ object }}</strong>? This cannot be undone.</p>
+    <form method="post" class="form">
+        {% csrf_token %}
+        <div class="form-actions">
+            <button type="submit" class="btn danger">Yes, delete</button>
+            <a class="btn ghost" href="{% url list_url %}">Cancel</a>
+        </div>
+    </form>
+</section>
+{% endblock %}
