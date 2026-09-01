@@ -6,9 +6,6 @@ urlpatterns = [
     path("", views.home, name="home"),
     # Users (Visitor table)
     path("users/", views.visitor_list, name="visitor_list"),
-    path("users/add/", views.visitor_create, name="visitor_create"),
-    path("users/<int:pk>/edit/", views.visitor_update, name="visitor_update"),
-    path("users/<int:pk>/delete/", views.visitor_delete, name="visitor_delete"),
     # Tourist attractions (Spot table)
     path("spots/", views.spot_list, name="spot_list"),
     path("spots/add/", views.spot_create, name="spot_create"),
