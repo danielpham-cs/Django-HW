@@ -7,14 +7,9 @@
     <title>{% block title %}Tourist Attraction Recommender{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'core/style.css' %}">
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
     <header class="topbar">
         <a class="brand" href="{% url 'home' %}">🧭 TravelRec</a>
-        <nav>
-            <a href="{% url 'visitor_list' %}">Users</a>
-            <a href="{% url 'spot_list' %}">Attractions</a>
-            <a href="{% url 'rating_list' %}">Ratings</a>
-        </nav>
     </header>
 
     <main class="container">

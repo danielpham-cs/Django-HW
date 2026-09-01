@@ -5,7 +5,12 @@
 <section class="panel">
     <div class="panel-head">
         <h1>Tourist Attractions</h1>
-        <a class="btn" href="{% url 'spot_create' %}">+ Add Attraction</a>
+        <div>
+            {% if selected_spot_id or selected_category %}
+            <a class="btn ghost" href="{% url 'spot_list' %}">Show All</a>
+            {% endif %}
+            <a class="btn" href="{% url 'spot_create' %}">+ Add Attraction</a>
+        </div>
     </div>
     <table class="table">
         <thead>

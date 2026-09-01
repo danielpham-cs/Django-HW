@@ -5,11 +5,10 @@
 <section class="panel">
     <div class="panel-head">
         <h1>Users</h1>
-        <a class="btn" href="{% url 'visitor_create' %}">+ Add User</a>
     </div>
     <table class="table">
         <thead>
-            <tr><th>ID</th><th>Name</th><th>Age</th><th class="actions">Actions</th></tr>
+            <tr><th>ID</th><th>Name</th><th>Age</th></tr>
         </thead>
         <tbody>
             {% for v in visitors %}
@@ -17,13 +16,9 @@
                 <td>{{ v.id }}</td>
                 <td>{{ v.name }}</td>
                 <td>{{ v.age }}</td>
-                <td class="actions">
-                    <a class="btn small" href="{% url 'visitor_update' v.id %}">Edit</a>
-                    <a class="btn small danger" href="{% url 'visitor_delete' v.id %}">Delete</a>
-                </td>
             </tr>
             {% empty %}
-            <tr><td colspan="4" class="empty">No users yet.</td></tr>
+            <tr><td colspan="3" class="empty">No users yet.</td></tr>
             {% endfor %}
         </tbody>
     </table>

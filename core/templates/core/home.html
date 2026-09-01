@@ -1,52 +1,205 @@
 {% extends "core/base.html" %}
 {% block title %}Home · TravelRec{% endblock %}
+{% block body_class %}home-page{% endblock %}
 
 {% block content %}
-<section class="hero">
-    <h1>Tourist Attraction Recommendation</h1>
-    <p>Manage users, attractions, and their ratings — all in one place.</p>
-</section>
+<div class="home">
+    <section class="home-hero">
+        <div class="home-hero-glow home-hero-glow--left"></div>
+        <div class="home-hero-glow home-hero-glow--right"></div>
+        <div class="home-hero-inner">
+            <span class="home-badge">Plan your next trip</span>
+            <h1>Find places travelers actually love</h1>
+            <p>Browse top destinations, compare ratings, and read real reviews from the community.</p>
 
-<div class="cards">
-    <a class="card" href="{% url 'visitor_list' %}">
-        <span class="card-icon">👤</span>
-        <h2>Users</h2>
-        <p>{{ visitors|length }} record(s)</p>
-    </a>
-    <a class="card" href="{% url 'spot_list' %}">
-        <span class="card-icon">📍</span>
-        <h2>Attractions</h2>
-        <p>{{ spots|length }} record(s)</p>
-    </a>
-    <a class="card" href="{% url 'rating_list' %}">
-        <span class="card-icon">⭐</span>
-        <h2>Ratings</h2>
-        <p>{{ ratings|length }} record(s)</p>
-    </a>
+            <form method="get" action="{% url 'home' %}" class="home-search" id="destination-form">
+                <label class="home-search-label" for="destination-select">Destination</label>
+                <div class="home-search-row">
+                    <select name="spot" class="home-select" id="destination-select">
+                        <option value="" {% if not selected_spot %}selected{% endif %}>All destinations</option>
+                        {% for spot in spots %}
+                        <option value="{{ spot.id }}" {% if selected_spot and selected_spot.id == spot.id %}selected{% endif %}>
+                            {{ spot.name }} — {{ spot.location }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-light">Explore</button>
+                </div>
+            </form>
+
+            <div class="home-stats">
+                <div class="home-stat">
+                    <strong>{{ stats.spots }}</strong>
+                    <span>Destinations</span>
+                </div>
+                <div class="home-stat">
+                    <strong>{{ stats.ratings }}</strong>
+                    <span>Reviews</span>
+                </div>
+                <div class="home-stat">
+                    <strong>{{ stats.categories }}</strong>
+                    <span>Categories</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {% if selected_spot %}
+    <section class="home-featured">
+        <div class="home-featured-card">
+            <div class="home-featured-main">
+                <p class="eyebrow">Now viewing</p>
+                <h2>{{ selected_spot.name }}</h2>
+                <p class="home-featured-location">{{ selected_spot.location }}</p>
+                <span class="tag">{{ selected_spot.category }}</span>
+            </div>
+            <div class="home-featured-side">
+                {% if selected_spot.avg_score %}
+                <div class="home-rating-pill">
+                    <span class="home-rating-value">{{ selected_spot.avg_score|floatformat:1 }}</span>
+                    <span class="home-rating-label">out of 5</span>
+                </div>
+                <p class="muted">{{ selected_spot.rating_count }} review{{ selected_spot.rating_count|pluralize }}</p>
+                {% else %}
+                <p class="muted">Be the first to review this place</p>
+                {% endif %}
+                <div class="home-featured-actions">
+                    <a class="btn" href="{% url 'rating_create' %}">Write a Review</a>
+                    <a class="btn ghost" href="{% url 'home' %}">Clear Filter</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="home-block">
+        <div class="home-block-head">
+            <div>
+                <h2>Popular Destinations</h2>
+                <p class="muted">Highest-rated spots picked by travelers</p>
+            </div>
+            <a class="home-link" href="{% url 'spot_list' %}">View all →</a>
+        </div>
+        <div class="spot-grid">
+            {% for spot in popular_spots %}
+            <a class="spot-card spot-card--{% cycle 'a' 'b' 'c' 'd' %}" href="{% url 'home' %}?spot={{ spot.id }}">
+                <div class="spot-card-top">
+                    <span class="spot-card-category">{{ spot.category }}</span>
+                    {% if spot.avg_score %}
+                    <span class="spot-card-score">{{ spot.avg_score|floatformat:1 }}</span>
+                    {% endif %}
+                </div>
+                <div class="spot-card-body">
+                    <h3>{{ spot.name }}</h3>
+                    <p>{{ spot.location }}</p>
+                    {% if spot.rating_count %}
+                    <span class="spot-card-meta">{{ spot.rating_count }} review{{ spot.rating_count|pluralize }}</span>
+                    {% else %}
+                    <span class="spot-card-meta">No reviews yet</span>
+                    {% endif %}
+                </div>
+            </a>
+            {% empty %}
+            <p class="empty-state">No destinations available yet.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="home-block home-block--soft">
+        <div class="home-block-head">
+            <div>
+                <h2>Explore by Category</h2>
+                <p class="muted">Jump into the type of trip you want</p>
+            </div>
+        </div>
+        <div class="category-grid">
+            {% for category in categories %}
+            <a class="category-chip" href="{% url 'spot_list' %}?category={{ category|urlencode }}">{{ category }}</a>
+            {% empty %}
+            <p class="empty-state">No categories yet.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="home-block">
+        <div class="home-block-head">
+            <div>
+                <h2>{% if selected_spot %}More like {{ selected_spot.name }}{% else %}Recommended for you{% endif %}</h2>
+                <p class="muted">
+                    {% if selected_spot %}
+                    Similar {{ selected_spot.category|lower }} destinations worth visiting
+                    {% else %}
+                    Curated picks from our best-rated places
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+        <div class="spot-grid spot-grid--compact">
+            {% for spot in recommended_spots %}
+            <a class="spot-card spot-card--compact spot-card--{% cycle 'a' 'b' 'c' 'd' %}" href="{% url 'home' %}?spot={{ spot.id }}">
+                <div class="spot-card-body">
+                    <span class="tag">{{ spot.category }}</span>
+                    <h3>{{ spot.name }}</h3>
+                    <p>{{ spot.location }}</p>
+                    {% if spot.avg_score %}
+                    <span class="spot-card-meta">Rated {{ spot.avg_score|floatformat:1 }} / 5</span>
+                    {% endif %}
+                </div>
+            </a>
+            {% empty %}
+            <p class="empty-state">No recommendations available.</p>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="home-block home-reviews">
+        <div class="home-block-head">
+            <div>
+                <h2>What travelers say</h2>
+                <p class="muted">
+                    {% if selected_spot %}
+                    Honest feedback about <strong>{{ selected_spot.name }}</strong>
+                    {% else %}
+                    Fresh reviews from across all destinations
+                    {% endif %}
+                </p>
+            </div>
+            <a class="btn ghost" href="{% url 'rating_create' %}">Share your experience</a>
+        </div>
+
+        <div class="reviews-grid">
+            {% for rating in ratings %}
+            <article class="review-tile">
+                <div class="review-tile-header">
+                    <div class="review-avatar">{{ rating.visitor.name|slice:":1"|upper }}</div>
+                    <div>
+                        <p class="review-author">{{ rating.visitor.name }}</p>
+                        <p class="review-spot">{{ rating.spot.name }}</p>
+                    </div>
+                </div>
+                <div class="review-stars" aria-label="Rating {{ rating.score }} out of 5">
+                    {% for i in "12345" %}
+                    <span class="review-star{% if forloop.counter > rating.score %} is-empty{% endif %}">★</span>
+                    {% endfor %}
+                </div>
+                <p class="review-text">"{{ rating.comment|default:'No comment provided.' }}"</p>
+            </article>
+            {% empty %}
+            <div class="empty-state empty-state--wide">
+                {% if selected_spot %}
+                No reviews for {{ selected_spot.name }} yet. Be the first to share your experience.
+                {% else %}
+                No reviews yet. Start by exploring a destination and leaving feedback.
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </section>
 </div>
 
-<section class="panel">
-    <div class="panel-head">
-        <h2>Latest Ratings</h2>
-        <a class="btn" href="{% url 'rating_create' %}">+ Add Rating</a>
-    </div>
-    <table class="table">
-        <thead>
-            <tr><th>ID</th><th>User</th><th>Attraction</th><th>Score</th><th>Comment</th></tr>
-        </thead>
-        <tbody>
-            {% for r in ratings %}
-            <tr>
-                <td>{{ r.id }}</td>
-                <td>{{ r.visitor.name }}</td>
-                <td>{{ r.spot.name }}</td>
-                <td>{{ r.score }} / 5</td>
-                <td>{{ r.comment }}</td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="5" class="empty">No ratings yet.</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</section>
+<script>
+document.getElementById("destination-select").addEventListener("change", function () {
+    document.getElementById("destination-form").submit();
+});
+</script>
 {% endblock %}
